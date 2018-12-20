@@ -13,31 +13,30 @@
         return $(this).each( function() {
 
             var $el = $(this), htmlEls = [],
+            spaceRegex = /\s+(\S+)$/gm, spaceReplace = '&nbsp;$1',
             text, els, i, lastIndex, lngth, replaceRegex;
 
             // "text" is going to be our "goto-girl" for string manipulation
-            text = $el.html();
+            text = $el.html().trim();
 
             // grab any html tags like a,strong,em
             els = text.match(/<([A-Z][A-Z0-9]*)\b[^>]*>/gi);
             lngth = ( els !== null ) ? els.length : 0;
 
-            // each time we match a html element opening tag (eg: <a href="">), 
+            // each time we match a html element opening tag (eg: <a href="">),
             // save it into array and replace it with a placeholder like: "__n__";
             for( i = 0; i < lngth; i++ ) {
                 htmlEls.push( els[i] );
                 text = text.replace( els[i] , "__"+i+"__");
             }
 
-            // now we find the given number of gathered words, and then insert a 
+            // now we find the given number of gathered words, and then insert a
             // non-breaking-space (&nbsp;) in to the given number of spaces.
             for( i = 0; i < gather; i++ ) {
-                lastIndex = text.lastIndexOf(" ");
-                if( lastIndex > 0 ) {
-                    text = text.substring(0, lastIndex) + "&nbsp;" + text.substring(lastIndex + 1);
-                }
+                text = text.replace( spaceRegex , spaceReplace );
             }
-            // now we have put the non-breaking-spaces in, we must replace the 
+
+            // now we have put the non-breaking-spaces in, we must replace the
             // placeholders with the original html elements we stored earlier.
             for( i = 0; i < lngth; i++ ) {
                 replaceRegex = new RegExp("__"+i+"__");
